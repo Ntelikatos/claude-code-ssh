@@ -69,12 +69,16 @@ if [ -f "${DATA_SSH_KEYS}/ssh_host_ed25519_key" ] && \
     cp -f "${DATA_SSH_KEYS}"/ssh_host_*_key     /etc/ssh/
     cp -f "${DATA_SSH_KEYS}"/ssh_host_*_key.pub  /etc/ssh/
 else
+    # Remove any existing keys first to avoid overwrite prompts
+    rm -f /etc/ssh/ssh_host_ed25519_key /etc/ssh/ssh_host_ed25519_key.pub
+    rm -f /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key.pub
+
     # Generate new keys
     log "  Generating new Ed25519 host key..."
-    ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N "" < /dev/null
+    ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ""
 
     log "  Generating new RSA-4096 host key..."
-    ssh-keygen -t rsa -b 4096 -f /etc/ssh/ssh_host_rsa_key -N "" < /dev/null
+    ssh-keygen -t rsa -b 4096 -f /etc/ssh/ssh_host_rsa_key -N ""
 
     # Persist for next restart
     log "  Persisting host keys to ${DATA_SSH_KEYS}..."

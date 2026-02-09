@@ -137,11 +137,16 @@ if [ ! -x "${DATA_HOME}/.local/bin/claude" ] && [ -d "${BUILD_HOME}/.local" ]; t
     chown -R "${CLAUDE_USER}:${CLAUDE_USER}" "${DATA_HOME}/.local"
 fi
 
-# Ensure ~/.local/bin is in PATH for all shell types (login + non-login)
+# Ensure ~/.local/bin is in PATH and UTF-8 locale for all shell types
 BASHRC="${DATA_HOME}/.bashrc"
 if [ -f "${BASHRC}" ] && ! grep -q '\.local/bin' "${BASHRC}"; then
-    echo 'export PATH="$HOME/.local/bin:$PATH"' >> "${BASHRC}"
-    log "  Added ~/.local/bin to PATH in .bashrc"
+    cat >> "${BASHRC}" <<'BASHRC_APPEND'
+export PATH="$HOME/.local/bin:$PATH"
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US:en
+export LC_ALL=en_US.UTF-8
+BASHRC_APPEND
+    log "  Added PATH and UTF-8 locale to .bashrc"
 fi
 
 # Change the user's home directory to /data/home

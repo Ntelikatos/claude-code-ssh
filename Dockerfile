@@ -69,8 +69,13 @@ USER claude
 RUN curl -fsSL https://claude.ai/install.sh | bash
 USER root
 
-# ---------- ensure ~/.local/bin is in PATH for all sessions -------------------
-RUN echo 'export PATH="$HOME/.local/bin:$PATH"' >> /etc/profile.d/claude-code.sh
+# ---------- ensure ~/.local/bin is in PATH and UTF-8 locale for all sessions --
+RUN printf '%s\n' \
+        'export PATH="$HOME/.local/bin:$PATH"' \
+        'export LANG=en_US.UTF-8' \
+        'export LANGUAGE=en_US:en' \
+        'export LC_ALL=en_US.UTF-8' \
+    >> /etc/profile.d/claude-code.sh
 
 # ---------- directories -------------------------------------------------------
 RUN mkdir -p /run/sshd /var/log /data \

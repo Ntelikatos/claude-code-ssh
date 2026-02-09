@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Phone outline -->
+  <rect x="64" y="24" width="128" height="208" rx="16" ry="16" fill="none" stroke="#6B4FBB" stroke-width="8"/>
+  <!-- Screen area -->
+  <rect x="76" y="56" width="104" height="128" rx="4" ry="4" fill="#6B4FBB" opacity="0.1"/>
+  <!-- Terminal prompt -->
+  <text x="92" y="130" font-family="monospace" font-size="64" font-weight="bold" fill="#6B4FBB">&gt;_</text>
+  <!-- Home indicator -->
+  <rect x="108" y="204" width="40" height="4" rx="2" ry="2" fill="#6B4FBB" opacity="0.5"/>
+</svg>

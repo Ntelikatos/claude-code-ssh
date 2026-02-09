@@ -81,6 +81,7 @@ COPY banner.txt               /etc/ssh/banner.txt
 COPY fail2ban/jail.local      /etc/fail2ban/jail.local
 COPY fail2ban/action.d/hostsdeny-claude.conf \
                               /etc/fail2ban/action.d/hostsdeny-claude.conf
+COPY tmux.conf                /etc/tmux.conf
 
 # ---------- s6-overlay service definitions ------------------------------------
 COPY s6-overlay/s6-rc.d/      /etc/s6-overlay/s6-rc.d/

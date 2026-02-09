@@ -58,15 +58,19 @@ RUN case "${TARGETARCH:-amd64}" in \
     && tar -C / -Jxpf /tmp/s6-arch.tar.xz \
     && rm -f /tmp/s6-noarch.tar.xz /tmp/s6-arch.tar.xz
 
-# ---------- Claude Code -------------------------------------------------------
-RUN npm install -g @anthropic-ai/claude-code \
-    && npm cache clean --force
-
 # ---------- non-root user -----------------------------------------------------
 RUN useradd -m -s /bin/bash -G sudo claude \
     && passwd -d claude \
     && echo "claude ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/claude \
     && chmod 0440 /etc/sudoers.d/claude
+
+# ---------- Claude Code (installed as claude user) ----------------------------
+USER claude
+RUN curl -fsSL https://claude.ai/install.sh | bash
+USER root
+
+# ---------- ensure ~/.local/bin is in PATH for all sessions -------------------
+RUN echo 'export PATH="$HOME/.local/bin:$PATH"' >> /etc/profile.d/claude-code.sh
 
 # ---------- directories -------------------------------------------------------
 RUN mkdir -p /run/sshd /var/log /data \

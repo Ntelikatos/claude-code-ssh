@@ -1,2 +1,3 @@
-#!/bin/bash
-exec fail2ban-server -xf start 2> >(stderr-to-json)
+#!/command/execlineb -P
+fdmove -c 2 1
+fail2ban-server -xf start

@@ -109,7 +109,10 @@ Use a fine-grained Personal Access Token to grant access to **specific repos onl
 2. Click **Generate new token**
 3. Set **Resource owner** to your account or org
 4. Set **Repository access** to **Only select repositories** and pick the repos you need
-5. Under **Permissions > Repository permissions**, grant **Contents: Read and write**
+5. Under **Permissions > Repository permissions**, grant:
+   - **Contents**: Read and write (clone, push, branches)
+   - **Pull requests**: Read and write (create/merge PRs)
+   - **Issues**: Read and write (create/comment on issues)
 6. Generate and copy the token
 7. In Railway dashboard, add it as a variable:
 

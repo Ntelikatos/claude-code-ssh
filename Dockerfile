@@ -85,6 +85,9 @@ RUN printf '%s\n' \
 RUN mkdir -p /run/sshd /var/log /data \
     && chown claude:claude /data
 
+# ---------- disable rsyslog kernel log module (not available in containers) ----
+RUN sed -i 's/^module(load="imklog")/#module(load="imklog")/' /etc/rsyslog.conf
+
 # ---------- remove default SSH host keys (generated at runtime) ---------------
 RUN rm -f /etc/ssh/ssh_host_*
 

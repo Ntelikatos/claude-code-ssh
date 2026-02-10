@@ -1,8 +1,14 @@
 # Claude Code SSH
 
-Run Claude Code from anywhere via SSH. Deploy on Railway and code from your phone in under 5 minutes.
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/claude-code-mobile?referralCode=fhlcDU&utm_medium=integration&utm_source=template&utm_campaign=generic)
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/claude-code-ssh) [![Star on GitHub](https://img.shields.io/github/stars/Ntelikatos/claude-code-ssh?style=social)](https://github.com/Ntelikatos/claude-code-ssh)
+[![Docker Build](https://github.com/Ntelikatos/claude-code-ssh/actions/workflows/docker-build.yml/badge.svg)](https://github.com/Ntelikatos/claude-code-ssh/actions/workflows/docker-build.yml)
+[![Lint Dockerfile](https://github.com/Ntelikatos/claude-code-ssh/actions/workflows/lint-dockerfile.yml/badge.svg)](https://github.com/Ntelikatos/claude-code-ssh/actions/workflows/lint-dockerfile.yml)
+[![ShellCheck](https://github.com/Ntelikatos/claude-code-ssh/actions/workflows/shellcheck.yml/badge.svg)](https://github.com/Ntelikatos/claude-code-ssh/actions/workflows/shellcheck.yml)
+[![Trivy Security Scan](https://github.com/Ntelikatos/claude-code-ssh/actions/workflows/trivy.yml/badge.svg)](https://github.com/Ntelikatos/claude-code-ssh/actions/workflows/trivy.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+Run Claude Code from anywhere via SSH. Deploy on Railway and code from your phone in under 5 minutes.
 
 ## What You Get
 
@@ -22,7 +28,7 @@ Run Claude Code from anywhere via SSH. Deploy on Railway and code from your phon
 
 ### Step 1: Deploy the Template
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/claude-code-ssh)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/claude-code-mobile?referralCode=fhlcDU&utm_medium=integration&utm_source=template&utm_campaign=generic)
 
 Click the button above, or manually create a project on [railway.com](https://railway.com) and deploy from this GitHub repo.
 

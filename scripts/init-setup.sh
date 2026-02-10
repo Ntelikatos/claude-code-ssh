@@ -282,18 +282,32 @@ if [ -n "${TZ:-}" ]; then
 fi
 
 # ==============================================================================
-# Step 10: GitHub CLI & Git configuration
+# Step 10: GitHub access (fine-grained PAT or gh CLI)
 # ==============================================================================
-log "Configuring GitHub CLI and Git..."
+log "Configuring GitHub access..."
 
-# Use gh as the git credential helper so 'git clone https://github.com/...'
-# works for private repos after 'gh auth login'
-su -s /bin/bash "${CLAUDE_USER}" -c '
-    git config --global credential.https://github.com.helper "!/usr/bin/gh auth git-credential"
-    git config --global credential.https://gist.github.com.helper "!/usr/bin/gh auth git-credential"
-' 2>/dev/null
-
-log "  Git credential helper configured (gh auth)."
+if [ -n "${GITHUB_TOKEN:-}" ]; then
+    # Fine-grained PAT provided — configure git to use it for HTTPS clones.
+    # This is the recommended method: scoped to specific repos only.
+    su -s /bin/bash "${CLAUDE_USER}" -c "
+        git config --global url.\"https://oauth2:${GITHUB_TOKEN}@github.com/\".insteadOf \"https://github.com/\"
+    "
+    # Also configure gh CLI to use the token (for 'gh repo clone', 'gh pr', etc.)
+    BASHRC="${CLAUDE_HOME}/.bashrc"
+    if [ -f "${BASHRC}" ]; then
+        sed -i '/^export GITHUB_TOKEN=/d' "${BASHRC}"
+    fi
+    echo "export GITHUB_TOKEN=${GITHUB_TOKEN}" >> "${BASHRC}"
+    chown "${CLAUDE_USER}:${CLAUDE_USER}" "${BASHRC}"
+    log "  GITHUB_TOKEN configured (fine-grained PAT)."
+else
+    # No token — set up gh CLI as credential helper for manual 'gh auth login'
+    su -s /bin/bash "${CLAUDE_USER}" -c '
+        git config --global credential.https://github.com.helper "!/usr/bin/gh auth git-credential"
+        git config --global credential.https://gist.github.com.helper "!/usr/bin/gh auth git-credential"
+    ' 2>/dev/null
+    log "  Git credential helper configured (gh auth). Run 'gh auth login' to authenticate."
+fi
 
 # ==============================================================================
 # Done

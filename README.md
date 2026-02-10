@@ -9,7 +9,7 @@ Run Claude Code from anywhere via SSH. Deploy on Railway and code from your phon
 - **Hardened SSH** — key-only auth, modern ciphers, sshaudit.com compliant. No passwords, no weak algorithms.
 - **Brute-force protection** — fail2ban bans attackers automatically (1 hour ban after 3 failures, 1 week for repeat offenders)
 - **Mobile-optimized tmux** — pre-tuned for Termius, Blink, and JuiceSSH. No broken characters, no escape sequence leaks.
-- **GitHub CLI built-in** — `gh auth login` once, then clone any private repo with `git clone`
+- **GitHub integration** — clone private repos with a fine-grained PAT scoped to specific repos only
 - **Persistent storage** — your projects, auth, and config survive redeployments via Railway volumes
 - **Multi-device access** — add SSH keys from your laptop, phone, and tablet. Connect from anywhere.
 
@@ -103,22 +103,32 @@ Detach anytime with `Ctrl+B` then `D`. Reattach later with `tmux attach -t dev`.
 
 ### Step 8: Clone Your Repos (optional)
 
-GitHub CLI is pre-installed. Authenticate once and clone any repo — public or private:
+Use a fine-grained Personal Access Token to grant access to **specific repos only**.
 
-```bash
-gh auth login
-```
+1. Go to [GitHub > Settings > Developer settings > Fine-grained tokens](https://github.com/settings/tokens?type=beta)
+2. Click **Generate new token**
+3. Set **Resource owner** to your account or org
+4. Set **Repository access** to **Only select repositories** and pick the repos you need
+5. Under **Permissions > Repository permissions**, grant **Contents: Read and write**
+6. Generate and copy the token
+7. In Railway dashboard, add it as a variable:
 
-Select **GitHub.com** > **HTTPS** > **Login with a web browser**. It gives you a one-time code — open the URL on your phone/laptop browser, paste the code, done.
+| Variable | Value |
+|----------|-------|
+| `GITHUB_TOKEN` | `github_pat_xxxx...` |
 
-Then clone any repo:
+After redeploy, just clone:
 ```bash
 cd /workspace
 git clone https://github.com/you/your-private-repo
 claude
 ```
 
-Git is automatically configured to use your `gh` auth for HTTPS clones — no tokens or SSH keys to manage. Auth persists across restarts via the `/data` volume.
+Auth persists across restarts via the `/data` volume.
+
+**Need repos from multiple orgs?** Create a separate Railway service per org, each with its own scoped `GITHUB_TOKEN`. This keeps access isolated — one container never touches another org's repos.
+
+> **Alternative:** `gh auth login` is also available but grants access to **all** repos across all your orgs. Use it only if you're comfortable with that scope.
 
 ---
 
@@ -185,6 +195,7 @@ The included tmux config is tuned for mobile: 256-color support, mouse/touch scr
 |----------|----------|---------|-------------|
 | `SSH_PUBLIC_KEY` | Yes | — | Ed25519 public key(s) for SSH auth. Multiple keys supported, one per line. |
 | `ANTHROPIC_API_KEY` | No | — | Claude API key. Alternative to `claude login`. |
+| `GITHUB_TOKEN` | No | — | Fine-grained PAT for cloning private repos. Scoped to specific repos only. |
 | `TZ` | No | `UTC` | Timezone (e.g. `America/New_York`, `Europe/London`) |
 
 ---

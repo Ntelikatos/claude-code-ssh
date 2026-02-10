@@ -4,6 +4,7 @@ banaction = hostsdeny-claude
 bantime = 1h
 findtime = 10m
 maxretry = 3
+allowipv6 = auto
 # Log to file for container visibility
 logtarget = /var/log/fail2ban.log
 

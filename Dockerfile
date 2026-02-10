@@ -46,7 +46,8 @@ RUN install -m 0755 -d /etc/apt/keyrings \
     && rm -rf /var/lib/apt/lists/*
 
 # ---------- Node version manager (n) + pnpm -----------------------------------
-RUN npm install -g n pnpm \
+# hadolint ignore=DL3016
+RUN npm install -g n@10.1.0 pnpm@10.4.1 \
     && npm cache clean --force
 
 # ---------- s6-overlay v3 -----------------------------------------------------
@@ -69,6 +70,7 @@ RUN useradd -m -s /bin/bash -G sudo claude \
     && chmod 0440 /etc/sudoers.d/claude
 
 # ---------- Claude Code (installed as claude user) ----------------------------
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 USER claude
 RUN curl -fsSL https://claude.ai/install.sh | bash
 USER root
@@ -81,15 +83,11 @@ RUN printf '%s\n' \
         'export LC_ALL=en_US.UTF-8' \
     >> /etc/profile.d/claude-code.sh
 
-# ---------- directories -------------------------------------------------------
+# ---------- directories & cleanup ---------------------------------------------
 RUN mkdir -p /run/sshd /var/log /data \
-    && chown claude:claude /data
-
-# ---------- disable rsyslog kernel log module (not available in containers) ----
-RUN sed -i 's/^module(load="imklog")/#module(load="imklog")/' /etc/rsyslog.conf
-
-# ---------- remove default SSH host keys (generated at runtime) ---------------
-RUN rm -f /etc/ssh/ssh_host_*
+    && chown claude:claude /data \
+    && sed -i 's/^module(load="imklog")/#module(load="imklog")/' /etc/rsyslog.conf \
+    && rm -f /etc/ssh/ssh_host_*
 
 # ---------- config files ------------------------------------------------------
 COPY sshd_config              /etc/ssh/sshd_config
@@ -102,13 +100,10 @@ COPY tmux.conf                /etc/tmux.conf
 # ---------- s6-overlay service definitions ------------------------------------
 COPY s6-overlay/s6-rc.d/      /etc/s6-overlay/s6-rc.d/
 
-# ---------- init script -------------------------------------------------------
+# ---------- scripts -----------------------------------------------------------
 COPY scripts/init-setup.sh    /etc/s6-overlay/scripts/init-setup.sh
-RUN chmod +x /etc/s6-overlay/scripts/init-setup.sh
-
-# ---------- stderr-to-json helper for Railway structured logging --------------
 COPY scripts/stderr-to-json.sh /usr/local/bin/stderr-to-json
-RUN chmod +x /usr/local/bin/stderr-to-json
+RUN chmod +x /etc/s6-overlay/scripts/init-setup.sh /usr/local/bin/stderr-to-json
 
 # ---------- register s6 services in user bundle -------------------------------
 RUN for svc in /etc/s6-overlay/s6-rc.d/*/type; do \

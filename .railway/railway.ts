@@ -17,8 +17,8 @@ export default defineRailway(() => {
   const claudeCodeSsh = service("claude-code-ssh", {
     // Deploying from a fork? Point this at your fork.
     source: github("Ntelikatos/claude-code-ssh", { branch: "master", checkSuites: true }),
+    // Railway always builds with the root Dockerfile when one exists.
     build: {
-      builder: "DOCKERFILE",
       buildEnvironment: "V3",
       watchPatterns: [
         "Dockerfile",
@@ -30,8 +30,8 @@ export default defineRailway(() => {
         "fail2ban/**",
       ],
     },
+    // Restart policy type defaults to ON_FAILURE; only the retry limit differs.
     deploy: {
-      restartPolicyType: "ON_FAILURE",
       restartPolicyMaxRetries: 5,
     },
     replicas: { [region]: 1 },

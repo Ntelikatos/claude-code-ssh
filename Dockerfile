@@ -1,13 +1,13 @@
 # ==============================================================================
 # claude-code-ssh — SSH-accessible Claude Code container
-# Base: node:24-slim (Debian Bookworm)
+# Base: node:26-slim (Node.js 26 LTS, Debian 13 Trixie)
 # PID 1: s6-overlay v3
 # ==============================================================================
 
-FROM node:24-slim AS base
+FROM node:26-slim AS base
 
 # ---------- build args --------------------------------------------------------
-ARG S6_OVERLAY_VERSION=3.2.0.2
+ARG S6_OVERLAY_VERSION=3.2.3.2
 
 # ---------- locale ------------------------------------------------------------
 ENV LANG=en_US.UTF-8 \
@@ -47,7 +47,7 @@ RUN install -m 0755 -d /etc/apt/keyrings \
 
 # ---------- Node version manager (n) + pnpm -----------------------------------
 # hadolint ignore=DL3016
-RUN npm install -g n@10.1.0 pnpm@10.4.1 \
+RUN npm install -g n@11.0.0 pnpm@12.16.1 \
     && npm cache clean --force
 
 # ---------- s6-overlay v3 -----------------------------------------------------
@@ -87,6 +87,7 @@ RUN printf '%s\n' \
 RUN mkdir -p /run/sshd /var/log /data \
     && chown claude:claude /data \
     && sed -i 's/^module(load="imklog")/#module(load="imklog")/' /etc/rsyslog.conf \
+    && echo 'auth,authpriv.* /dev/stdout' > /etc/rsyslog.d/50-auth-stdout.conf \
     && rm -f /etc/ssh/ssh_host_*
 
 # ---------- config files ------------------------------------------------------
@@ -99,6 +100,7 @@ COPY tmux.conf                /etc/tmux.conf
 
 # ---------- s6-overlay service definitions ------------------------------------
 COPY s6-overlay/s6-rc.d/      /etc/s6-overlay/s6-rc.d/
+COPY s6-overlay/user-bundles.d/ /etc/s6-overlay/user-bundles.d/
 
 # ---------- scripts -----------------------------------------------------------
 COPY scripts/init-setup.sh    /etc/s6-overlay/scripts/init-setup.sh
@@ -107,16 +109,13 @@ RUN chmod +x /etc/s6-overlay/scripts/init-setup.sh /usr/local/bin/stderr-to-json
 
 # ---------- register s6 services in user bundle -------------------------------
 RUN for svc in /etc/s6-overlay/s6-rc.d/*/type; do \
-        svc_name="$(basename "$(dirname "$svc")")"; \
-        if [ "$svc_name" != "user" ] && [ "$svc_name" != "user2" ]; then \
-            touch "/etc/s6-overlay/s6-rc.d/user/contents.d/${svc_name}"; \
-        fi; \
+        touch "/etc/s6-overlay/user-bundles.d/user/contents.d/$(basename "$(dirname "$svc")")"; \
     done
 
 # ---------- runtime -----------------------------------------------------------
 EXPOSE 22
 
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-    CMD ssh-keyscan -T 5 localhost >/dev/null 2>&1 || exit 1
+    CMD ["/bin/sh", "-c", "ssh-keyscan -T 5 localhost >/dev/null 2>&1 || exit 1"]
 
 ENTRYPOINT ["/bin/bash", "-c", "exec /init 2> >(stderr-to-json)"]

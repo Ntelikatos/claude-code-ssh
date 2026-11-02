@@ -5,6 +5,9 @@ bantime = 1h
 findtime = 10m
 maxretry = 3
 allowipv6 = auto
+# Never ban Railway-internal addresses: behind Railway's TCP proxy all clients
+# share them, so a ban would lock everyone out. Bans apply on VPS / direct Docker.
+ignoreip = 127.0.0.1/8 ::1 10.0.0.0/8 100.64.0.0/10 fd00::/8
 # Log to file for container visibility
 logtarget = /var/log/fail2ban.log
 
@@ -12,6 +15,8 @@ logtarget = /var/log/fail2ban.log
 enabled = true
 port = 22
 filter = sshd[mode=aggressive]
+# Debian defaults sshd to the systemd journal, which containers don't have
+backend = auto
 logpath = /var/log/auth.log
 maxretry = 3
 bantime = 3600

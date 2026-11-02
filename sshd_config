@@ -1,7 +1,7 @@
 ################################################################################
 # Hardened OpenSSH Server Configuration
-# Generated: 2026-02-09
-# Standards: sshaudit.com 2025+ guidelines
+# Updated: 2026-11-02 (OpenSSH 10, Debian 13 Trixie)
+# Standards: ssh-audit.com hardening guidelines + post-quantum key exchange
 # Security: Modern algorithms only, key-based auth, no root login
 ################################################################################
 
@@ -32,9 +32,10 @@ HostKey /etc/ssh/ssh_host_rsa_key
 ################################################################################
 
 # Key Exchange Algorithms
-# curve25519: Modern ECDH, high security
+# mlkem768x25519 / sntrup761x25519: Post-quantum hybrid (OpenSSH 10 default)
+# curve25519: Modern ECDH, fallback for older clients
 # diffie-hellman-group16/18: Strong DH groups (4096/8192-bit)
-KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group18-sha512,diffie-hellman-group16-sha512
+KexAlgorithms mlkem768x25519-sha256,sntrup761x25519-sha512,sntrup761x25519-sha512@openssh.com,curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group18-sha512,diffie-hellman-group16-sha512
 
 # Ciphers
 # ChaCha20-Poly1305: Fast authenticated encryption
@@ -61,7 +62,6 @@ PubkeyAuthentication yes
 
 # Password authentication disabled (keys only)
 PasswordAuthentication no
-ChallengeResponseAuthentication no
 KbdInteractiveAuthentication no
 
 # PAM disabled (not needed for key-only auth)
@@ -79,6 +79,11 @@ LoginGraceTime 30
 # Connection rate limiting (start:rate:full)
 # Start dropping 50% of new connections after 3, reject all after 10
 MaxStartups 3:50:10
+
+# Per-source penalties (OpenSSH 10 default) throttle addresses that keep failing.
+# Behind Railway's TCP proxy every client arrives from Railway-internal addresses
+# (CGNAT / IPv6 ULA), so exempt those to avoid locking out all users at once.
+PerSourcePenaltyExemptList 10.0.0.0/8,100.64.0.0/10,fd00::/8
 
 ################################################################################
 # Session Management

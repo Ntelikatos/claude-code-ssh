@@ -2,6 +2,10 @@
 .gitignore
 .omc/
 .vscode/
+.github/
+.railway/
+node_modules/
+package*.json
 *.md
 !README.md
 LICENSE

@@ -21,7 +21,7 @@ Run Claude Code from anywhere via SSH. Deploy on Railway and code from your phon
 - **GitHub integration** — clone private repos with a fine-grained PAT scoped to specific repos only
 - **Persistent storage** — your projects, auth, and config survive redeployments via Railway volumes
 - **Multi-device access** — add SSH keys from your laptop, phone, and tablet. Connect from anywhere.
-- **Railway Infrastructure as Code** — the whole deployment (service, Dockerfile build, TCP proxy, volume, restart policy) is declared in [`.railway/railway.ts`](.railway/railway.ts). Review it with `railway config plan`, roll it out with `railway config apply`.
+- **Railway Infrastructure as Code** — the whole deployment (service, Dockerfile build, TCP proxy, volume) is declared in [`.railway/railway.ts`](.railway/railway.ts). Review it with `railway config plan`, roll it out with `railway config apply`.
 
 ---
 
@@ -144,7 +144,7 @@ Auth persists across restarts via the `/data` volume.
 
 ## Deploy with Infrastructure as Code
 
-The Railway project is defined in [`.railway/railway.ts`](.railway/railway.ts) using [Railway Infrastructure as Code](https://docs.railway.com/infrastructure-as-code): one `claude-code-ssh` service built from the `Dockerfile`, a TCP proxy on port `22`, a volume mounted at `/data`, and the restart policy. Secrets are never stored in the file: the project sets `variables: { managed: false }`, so your Railway variables stay untouched.
+The Railway project is defined in [`.railway/railway.ts`](.railway/railway.ts) using [Railway Infrastructure as Code](https://docs.railway.com/infrastructure-as-code): one `claude-code-ssh` service built from the `Dockerfile`, a TCP proxy on port `22`, and a volume mounted at `/data`. Secrets are never stored in the file: the project sets `variables: { managed: false }`, so your Railway variables stay untouched.
 
 Requires the [Railway CLI](https://docs.railway.com/cli) (`railway upgrade` for the latest) and Node.js 22+.
 

@@ -38,7 +38,7 @@ claude
 
 **What's included out of the box:**
 
-- **Railway Infrastructure as Code** — Service, Dockerfile build, TCP proxy, volume, and restart policy declared in `.railway/railway.ts`. Preview with `railway config plan`, roll out with `railway config apply`. Secrets stay in Railway variables.
+- **Railway Infrastructure as Code** — Service, Dockerfile build, TCP proxy, and volume declared in `.railway/railway.ts`. Preview with `railway config plan`, roll out with `railway config apply`. Secrets stay in Railway variables.
 - **Post-quantum SSH** — ML-KEM-768 + X25519 hybrid key exchange (OpenSSH 10), key-only auth, AEAD ciphers, zero ssh-audit failures
 - **Key-only access** — No passwords to brute-force. Self-hosting on a VPS? fail2ban and OpenSSH per-source penalties ban attackers too
 - **Persistent tmux** — Mobile-tuned config with touch scrolling, true color, and 50k lines of scrollback

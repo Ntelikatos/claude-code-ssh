@@ -30,10 +30,7 @@ export default defineRailway(() => {
         "fail2ban/**",
       ],
     },
-    // Restart policy type defaults to ON_FAILURE; only the retry limit differs.
-    deploy: {
-      restartPolicyMaxRetries: 5,
-    },
+    // Restart policy is left at Railway's default: on failure, up to 10 times.
     replicas: { [region]: 1 },
     tcp: [22],
     volumeMounts: {

@@ -2,16 +2,16 @@
 
 ## Process Tree
 
-The container uses **s6-overlay v3** as PID 1 for process supervision:
+The container uses **s6-overlay v3** as PID 1 for process supervision. Service definitions live in `s6-overlay/s6-rc.d/`; the `user` bundle that starts them lives in `s6-overlay/user-bundles.d/`.
 
 ```
 s6-overlay (PID 1)
 ├── init-setup (oneshot)
 │   └── Volume init, SSH keys, DH moduli filtering, user setup
 ├── syslog (longrun, depends: init-setup)
-│   └── rsyslogd — routes auth logs to /var/log/auth.log for fail2ban
+│   └── rsyslogd — writes sshd auth logs to /var/log/auth.log (for fail2ban) and stdout (for Railway logs)
 ├── sshd (longrun, depends: init-setup)
-│   └── Hardened OpenSSH daemon (key-only, modern ciphers)
+│   └── Hardened OpenSSH daemon (key-only, post-quantum KEX, modern ciphers)
 └── fail2ban (longrun, depends: syslog, sshd)
     └── Monitors auth.log, bans IPs via /etc/hosts.deny (hostsdeny action)
 ```

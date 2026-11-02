@@ -11,7 +11,7 @@ s6-overlay/** text eol=lf
 sshd_config text eol=lf
 fail2ban/** text eol=lf
 banner.txt text eol=lf
-supervisord.conf text eol=lf
+tmux.conf text eol=lf
 
 # Dockerfile
 Dockerfile text eol=lf
